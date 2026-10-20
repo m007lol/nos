@@ -1,10 +1,13 @@
 """
-Discord News Bot - GEEN TIJD MEER
-Alleen NOS.NL boven en onder, geen datum, geen "vandaag om"
+Discord News Bot - FIXED TIJD + ZONDER DUBBELE TIJD
+- Goede Nederlandse tijd (Europe/Amsterdam)
+- Geen "vandaag om 11:31" meer eronder
 """
 import discord
 from discord.ext import commands
 import os
+from datetime import datetime
+from zoneinfo import ZoneInfo
 from flask import Flask
 from threading import Thread
 
@@ -49,14 +52,19 @@ class NewsModal(discord.ui.Modal, title="Nieuw News Artikel"):
                 await interaction.followup.send(f"❌ News kanaal niet gevonden: {e}", ephemeral=True)
                 return
 
+        # GOEDE NEDERLANDSE TIJD
+        amsterdam_tz = ZoneInfo("Europe/Amsterdam")
+        now = datetime.now(amsterdam_tz)
+        datum_str = now.strftime("%d-%m-%Y - %H:%M")
+
         bron_text = self.bron.value if self.bron.value else "NOS.NL"
         
-        # GEEN TIJD, GEEN DATUM, GEEN TIMESTAMP - alleen NOS.NL
+        # GEEN timestamp meer = geen "vandaag om 11:31" erbij
         embed = discord.Embed(title=self.titel.value, description=self.artikel.value, color=0x2B2D31)
-        embed.set_author(name=f"{bron_text}")
+        embed.set_author(name=f"{bron_text} - {datum_str}")
         if self.afbeelding_url.value:
             embed.set_image(url=self.afbeelding_url.value)
-        embed.set_footer(text=f"{bron_text}")
+        embed.set_footer(text=f"{bron_text} - {datum_str}")
 
         try:
             await news_channel.send(embed=embed)

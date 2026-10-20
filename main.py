@@ -1,5 +1,6 @@
 """
-Discord News Bot - Railway versie - !news trigger + NOS stijl
+Discord News Bot - Railway versie - ZONDER profielfoto in footer
+Exact zoals NOS screenshot
 """
 import discord
 from discord.ext import commands
@@ -57,7 +58,8 @@ class NewsModal(discord.ui.Modal, title="Nieuw News Artikel"):
         embed.set_author(name=f"{bron_text} • {datum_str}")
         if self.afbeelding_url.value:
             embed.set_image(url=self.afbeelding_url.value)
-        embed.set_footer(text=f"{bron_text} - {datum_str}", icon_url=interaction.user.display_avatar.url if interaction.user.display_avatar else None)
+        # GEEN PROFIELFOTO MEER - alleen tekst zoals NOS screenshot
+        embed.set_footer(text=f"{bron_text} - {datum_str}")
 
         try:
             await news_channel.send(embed=embed)
